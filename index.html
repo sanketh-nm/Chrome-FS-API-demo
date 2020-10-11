@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="UTF-8" />
+
+  <link rel="stylesheet" href="https://semantic-ui.com/dist/semantic.min.css">
+  </link>
+  <style id="webmakerstyle">
+    body {
+      background: #1b1c1d;
+      color: grey;
+    }
+
+    .container {
+      margin-top: 3em;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="ui container">
+    <div class="ui message">
+      <div class="header">Basic demo for File System Access API </div>
+      <p>
+        read more at <a href="https://web.dev/file-system-access/">https://web.dev/file-system-access/</a>
+      </p>
+    </div>
+    <h3>Open file to show contents and make edits</h3>
+    <div class="ui inverted form">
+      <div class="field">
+        <label>Contents</label> <textarea id="textarea"></textarea>
+      </div>
+      <button class="ui inverted grey button" id="butOpenFile">
+        Open File
+      </button>
+      <button class="ui inverted primary button" id="butSaveFile">save</button>
+    </div>
+    <h3>
+      This site has access to the below files and can make changes to them until
+      the tab is closed.
+    </h3>
+    <div class="ui bulleted list" id="list"></div>
+  </div>
+
+
+  <script>
+    let fileHandle;
+    butOpenFile = document.getElementById('butOpenFile')
+    butSaveFile = document.getElementById('butSaveFile')
+    textarea = document.getElementById('textarea')
+    list = document.getElementById('list')
+
+    butOpenFile.addEventListener('click', async () => {
+      // Destructure the one-element array.
+      [fileHandle] = await window.showOpenFilePicker();
+
+      const file = await fileHandle.getFile();
+      const contents = await file.text();
+      textarea.value = contents
+      item = document.createElement('div')
+      item.classList.add("item")
+      item.innerHTML = file.name
+      list.appendChild(item)
+
+    });
+
+    butSaveFile.addEventListener('click', async () => {
+
+      const writable = await fileHandle.createWritable();
+      await writable.write(textarea.value)
+      await writable.close()
+      alert('saved')
+
+    });
+  </script>
+</body>
+
+</html>
